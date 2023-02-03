@@ -1,1 +1,1 @@
-# BasicCrud
+Basic CRUD with JWT token.

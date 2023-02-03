@@ -16,12 +16,14 @@ namespace BasicCrud.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly JwtConfig _jwtConfig;
+        //private readonly JwtConfig _jwtConfig;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationController(UserManager<IdentityUser> userManager, JwtConfig jwtConfig)
+        public AuthenticationController(UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
-            _jwtConfig = jwtConfig;
+            //_jwtConfig = jwtConfig;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -72,7 +74,7 @@ namespace BasicCrud.Controllers
         private string generateJwtToken(IdentityUser user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_jwtConfig.Secret);
+            var key = Encoding.UTF8.GetBytes(_configuration.GetSection(key:"JwtConfig:Secret").Value);
 
             //Token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor() {

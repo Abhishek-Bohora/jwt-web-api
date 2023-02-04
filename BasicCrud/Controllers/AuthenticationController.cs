@@ -71,6 +71,55 @@ namespace BasicCrud.Controllers
             return BadRequest();
         }
 
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginRequestDto loginRequest) {
+            if (ModelState.IsValid) {
+                var existingUser = await _userManager.FindByEmailAsync(loginRequest.Email);
+                if(existingUser == null)
+                {
+                    return BadRequest(new AuthResult()
+                    {
+                        Result = false,
+                        Errors = new List<string>()
+                        {
+                            //we should not give information about why it failed for security reason
+                            "Invalid Payload"
+                        }
+                    });
+                }
+                var passwordVerify = await _userManager.CheckPasswordAsync(existingUser, loginRequest.Password);
+                if (!passwordVerify)
+                {
+                    return BadRequest(new AuthResult()
+                    {
+                        Result = false,
+                        Errors = new List<string>()
+                        {
+                            "Invalid Payload"
+                        }
+                    });
+                }
+
+                //we gonna generate jwt token if everything is fine
+                var jwtToken = generateJwtToken(existingUser);
+                return Ok(new AuthResult()
+                {
+                    Result = true,
+                    Token = jwtToken
+                });
+            }
+
+            return BadRequest(new AuthResult()
+            {
+                Result = false,
+                Errors = new List<string>()
+                {
+                    "Invalid Payload"
+                }
+            });
+        }
+
         private string generateJwtToken(IdentityUser user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();

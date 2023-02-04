@@ -1,11 +1,15 @@
 ﻿using BasicCrud.Data;
 using BasicCrud.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BasicCrud.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] //this uses a default authentication
+    //scheme that we have defined in Program.cs
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController : ControllerBase
